@@ -1,20 +1,19 @@
 // SignIn.jsx
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../pages/styles.css";
 const SignIn = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  // const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSignIn = async (event) => {
     event.preventDefault();
     if (username && password) {
       // Successful sign-in (you can redirect or perform other actions here)
-      setError("");
+      // setError("");
       console.log("Signed in successfully!");
     } else {
       alert("Please enter both username and password.");

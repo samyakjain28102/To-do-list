@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 
@@ -12,11 +12,21 @@ const TaskForm = () => {
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setTask((prevTask) => ({
-      ...prevTask,
-      [name]: value,
-    }));
+    const { name, value, type, checked } = e.target;
+
+    // If the input type is checkbox, handle it separately
+    if (type === "checkbox") {
+      setTask((prevTask) => ({
+        ...prevTask,
+        [name]: checked, // Set the value to the checked state of the checkbox
+      }));
+    } else {
+      // For other input types, handle normally
+      setTask((prevTask) => ({
+        ...prevTask,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (event) => {

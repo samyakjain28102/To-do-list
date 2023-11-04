@@ -9,6 +9,7 @@ const Todo = require("../models/user"); // Assuming your model is in a file name
 // Register route
 router.post("/register", async (req, res) => {
   try {
+    console.log(req.body);
     const { name, email, username, password } = req.body;
 
     // Check if the user already exists

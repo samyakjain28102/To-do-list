@@ -38,8 +38,8 @@ export default function Home() {
   return (
     <>
       <NavBar userId={userId} setUserId = {setUserId}/>
-      <TaskForm />
       {isValid && <View />}
+      <TaskForm />
     </>
   );
 }
