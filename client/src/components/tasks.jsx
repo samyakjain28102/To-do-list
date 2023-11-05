@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
 
 const TaskForm = () => {
+  const navigate = useNavigate();
   const [task, setTask] = useState({
     title: "",
     description: "",
@@ -30,35 +32,48 @@ const TaskForm = () => {
   };
 
   const handleSubmit = async (event) => {
-    // event.preventDefault();
+    // Prevent the default form submission behavior
+    event.preventDefault();
+  
     try {
-      const userId = localStorage.getItem("usertoken"); // Get user ID from local storage
-      console.log(task);
-      const response = await axios.put(
-        `http://localhost:8000/api/todo/tasks?userId=${userId}`,
-        task,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+      // Get user ID from local storage
+      const userId = localStorage.getItem("usertoken");
+  
+      // Check if userId exists
+      if (userId) {
+        console.log(task);
+  
+        const response = await axios.put(
+          `http://localhost:8000/api/todo/tasks?userId=${userId}`,
+          task,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+  
+        if (response.status === 201) {
+          console.log("Task submitted successfully");
+          // Add any additional logic you want to perform after a successful submission
+        } else {
+          console.error("Failed to submit task");
         }
-      );
-
-      if (response.status === 201) {
-        console.log("Task submitted successfully");
-        // Add any additional logic you want to perform after a successful submission
       } else {
-        console.error("Failed to submit task");
+        // If userId does not exist, navigate to the signing page
+        console.log("User ID not found. Redirecting to signing page...");
+        navigate("./signin");
       }
     } catch (error) {
       console.error("Error submitting task:", error.message);
     }
   };
+  
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Group controlId="formTitle">
-        <Form.Label>Title</Form.Label>
+    <Form className="row m-4 border p-3 shadow-lg" onSubmit={handleSubmit}>
+      <Form.Group className="mb-2" controlId="formTitle">
+        <Form.Label className="mb-1">Title</Form.Label>
         <Form.Control
           type="text"
           placeholder="Enter task title"
@@ -69,8 +84,8 @@ const TaskForm = () => {
         />
       </Form.Group>
 
-      <Form.Group controlId="formDescription">
-        <Form.Label>Description</Form.Label>
+      <Form.Group className="mb-2" controlId="formDescription">
+        <Form.Label className="mb-1">Description</Form.Label>
         <Form.Control
           as="textarea"
           rows={3}
@@ -81,7 +96,7 @@ const TaskForm = () => {
         />
       </Form.Group>
 
-      <Form.Group controlId="formIsCompleted">
+      <Form.Group className="mb-2" controlId="formIsCompleted">
         <Form.Check
           type="checkbox"
           label="Is Completed"
@@ -91,8 +106,8 @@ const TaskForm = () => {
         />
       </Form.Group>
 
-      <Form.Group controlId="formDueDate">
-        <Form.Label>Due Date</Form.Label>
+      <Form.Group className="mb-2" controlId="formDueDate">
+        <Form.Label className="mb-1">Due Date</Form.Label>
         <Form.Control
           type="date"
           name="dueDate"
@@ -101,8 +116,8 @@ const TaskForm = () => {
         />
       </Form.Group>
 
-      <Form.Group controlId="formPriority">
-        <Form.Label>Priority</Form.Label>
+      <Form.Group className="mb-2" controlId="formPriority">
+        <Form.Label className="mb-1">Priority</Form.Label>
         <Form.Control
           as="select"
           name="priority"
@@ -115,7 +130,7 @@ const TaskForm = () => {
         </Form.Control>
       </Form.Group>
 
-      <Button variant="primary" type="submit">
+      <Button className="col-4 mx-auto mt-3" variant="primary" type="submit">
         Add Task
       </Button>
     </Form>

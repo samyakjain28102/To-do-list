@@ -6,7 +6,6 @@ import axios from "axios";
 export default function Home() {
   const [isValid, setIsValid] = useState(false);
   const [userId, setUserId] = useState(localStorage.getItem("usertoken"));
-  
 
   useEffect(() => {
     // Fetch authentication status from the server
@@ -37,9 +36,13 @@ export default function Home() {
 
   return (
     <>
-      <NavBar userId={userId} setUserId = {setUserId}/>
-      {isValid && <View />}
-      <TaskForm />
+      <NavBar userId={userId} setUserId={setUserId} />
+      <div className="row">
+        <div className="col-4">
+          <TaskForm />
+        </div>
+        <div className="col-8">{isValid && <View />}</div>
+      </div>
     </>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Button, Card, Col, Container, Row } from "react-bootstrap";
 
 const View = () => {
   const [allTasks, setAllTasks] = useState([]);
@@ -38,13 +39,13 @@ const View = () => {
       );
 
       if (response.status === 200) {
-        // Task deleted successfully, update the state to reflect the change
         const updatedTasks = allTasks.filter((task) => task._id !== taskId);
         setAllTasks(updatedTasks);
 
-        // If showing incomplete tasks, update filtered tasks
         if (showIncomplete) {
-          const updatedFilteredTasks = filteredTasks.filter((task) => task._id !== taskId);
+          const updatedFilteredTasks = filteredTasks.filter(
+            (task) => task._id !== taskId
+          );
           setFilteredTasks(updatedFilteredTasks);
         }
 
@@ -58,14 +59,19 @@ const View = () => {
   };
 
   const sortTasksByDueDate = (tasksToSort) => {
-    return tasksToSort.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+    const sortedTasks = [...tasksToSort].sort(
+      (a, b) => new Date(a.dueDate) - new Date(b.dueDate)
+    );
+    return sortedTasks;
   };
 
   const sortTasksByPriority = (tasksToSort) => {
-    return tasksToSort.sort((a, b) => {
+    console.log("clicked")
+    const sortedTasks = [...tasksToSort].sort((a, b) => {
       const priorityOrder = { high: 3, medium: 2, low: 1 };
       return priorityOrder[b.priority] - priorityOrder[a.priority];
     });
+    return sortedTasks;
   };
 
   const filterIncompleteTasks = () => {
@@ -76,25 +82,41 @@ const View = () => {
 
   const resetTasks = () => {
     setShowIncomplete(false);
-    // Reset filtered tasks to all tasks
     setFilteredTasks([]);
   };
 
   const tasksToDisplay = showIncomplete ? filteredTasks : allTasks;
 
   return (
-    <div>
+    <Container>
       <h1>Task List</h1>
-      <div>
-        <button onClick={() => setFilteredTasks(sortTasksByDueDate([...tasksToDisplay]))}>
+      <div className="d-flex mb-3">
+        <Button
+          // variant="info"
+          className="me-2"
+          onClick={() => setAllTasks(sortTasksByDueDate(tasksToDisplay))}
+        >
           Sort by Due Date
-        </button>
-        <button onClick={() => setFilteredTasks(sortTasksByPriority([...tasksToDisplay]))}>
+        </Button>
+        <Button
+          // variant="info"
+          className="me-2"
+          onClick={() => setAllTasks(sortTasksByPriority(tasksToDisplay))}
+        >
           Sort by Priority
-        </button>
-        <button onClick={filterIncompleteTasks}>Show Incomplete Tasks</button>
+        </Button>
+        
+        <Button
+          variant="warning"
+          className="me-2"
+          onClick={filterIncompleteTasks}
+        >
+          Show Incomplete Tasks
+        </Button>
         {showIncomplete && (
-          <button onClick={resetTasks}>Show All Tasks</button>
+          <Button variant="secondary" onClick={resetTasks}>
+            Show All Tasks
+          </Button>
         )}
       </div>
       {loading ? (
@@ -102,23 +124,46 @@ const View = () => {
       ) : tasksToDisplay.length === 0 ? (
         <p>No tasks found.</p>
       ) : (
-        <div className="card-container">
+        <Row>
           {tasksToDisplay.map((task) => (
-            <div key={task._id} className="card">
-              <h3>{task.title}</h3>
-              <p>{task.description}</p>
-              <p>Due Date: {task.dueDate}</p>
-              <p>Priority: {task.priority}</p>
-              <p>Completed: {task.isCompleted ? "Yes" : "No"}</p>
-              <Link to={`/edit?userId=${userId}&taskId=${task._id}`}>
-                <button>Edit</button>
-              </Link>
-              <button onClick={() => handleDelete(task._id)}>Delete</button>
-            </div>
+            <Col key={task._id} className="col-12 mb-4">
+              <Card>
+                <Card.Body>
+                  <div className="d-flex justify-content-between">
+                    <Card.Title>{task.title}</Card.Title>
+                    <div>
+                      <Link
+                        to={`/edit?userId=${userId}&taskId=${task._id}`}
+                        className="btn btn-primary mr-2 mx-2"
+                      >
+                        <i className="las la-pencil-alt fs-4"></i>
+                      </Link>
+                      <Button
+                        variant="danger"
+                        onClick={() => handleDelete(task._id)}
+                      >
+                        <i className="lar la-trash-alt fs-4"></i>
+                      </Button>
+                    </div>
+                  </div>
+                  <Card.Text className="mb-0">{task.description}</Card.Text>
+                  <Card.Text className="mb-0">
+                    Due Date:{" "}
+                    {new Date(task.dueDate).toLocaleDateString("en-GB")}
+                  </Card.Text>
+                  <Card.Text className="mb-0">
+                    Priority: {task.priority}
+                  </Card.Text>
+                  <Card.Text className="mb-0">
+                    Completed: {task.isCompleted ? "Yes" : "No"}
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
           ))}
-        </div>
+        </Row>
       )}
-    </div>
+    </Container>
   );
 };
 
